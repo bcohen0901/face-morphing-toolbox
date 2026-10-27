@@ -8,5 +8,5 @@ authors:
   - family-names: Cohen
     given-names: Brandon R.
     affiliation: University of Colorado Boulder
-repository-code: "[GitHub URL]"
+repository-code: "https://github.com/bcohen0901/face-morphing-toolbox"
 url: "https://huggingface.co/spaces/bcohen0901/face-morphing-share"
