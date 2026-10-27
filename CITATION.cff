@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Face Morphing Toolbox"
+version: 1.2.0
+date-released: 2026-10-26
+license: MIT
+authors:
+  - family-names: Cohen
+    given-names: Brandon R.
+    affiliation: University of Colorado Boulder
+repository-code: "[GitHub URL]"
+url: "https://huggingface.co/spaces/bcohen0901/face-morphing-share"

@@ -1,0 +1,88 @@
+{
+  "c75_t75": {
+    "n_identities": 76,
+    "groups": {
+      "AF": 20,
+      "AM": 19,
+      "WF": 18,
+      "WM": 19
+    },
+    "pair_vs_unrelated_same_category": {
+      "comparison": "pair vs unrelated same-category",
+      "n": 76,
+      "mean_x": 0.5984311158719816,
+      "mean_y": 0.10887714665946796,
+      "mean_diff": 0.4895539692125138,
+      "ci95": [
+        0.47552289381533813,
+        0.5035850446096894
+      ],
+      "dz": 7.972865296898761,
+      "t": 69.5058282392882,
+      "p_t": 7.560217594187537e-70,
+      "p_wilcoxon": 3.6060528034893936e-14,
+      "prop_positive": 1.0
+    },
+    "pair_vs_unrelated_cross_category": {
+      "comparison": "pair vs unrelated other-category",
+      "n": 76,
+      "mean_x": 0.5984311158719816,
+      "mean_y": 0.052229816284561255,
+      "mean_diff": 0.5462012995874204,
+      "ci95": [
+        0.5328731962878993,
+        0.5595294028869414
+      ],
+      "dz": 9.364599058667904,
+      "t": 81.63868188701903,
+      "p_t": 5.077887710984583e-75,
+      "p_wilcoxon": 3.6060528034893936e-14,
+      "prop_positive": 1.0
+    },
+    "original_vs_own_vs_other": {
+      "comparison": "original-own vs original-other",
+      "n": 76,
+      "mean_x": 0.8419298913918043,
+      "mean_y": 0.05060881751736191,
+      "mean_diff": 0.7913210738744424,
+      "ci95": [
+        0.7806631317447799,
+        0.8019790160041049
+      ],
+      "dz": 16.966184397171258,
+      "t": 147.9077664894921,
+      "p_t": 2.974552259211586e-94,
+      "p_wilcoxon": 3.6060528034893936e-14,
+      "prop_positive": 1.0
+    },
+    "pair_vs_original_own": {
+      "comparison": "pair vs original-own",
+      "n": 76,
+      "mean_x": 0.5984311158719816,
+      "mean_y": 0.8419298913918043,
+      "mean_diff": -0.24349877551982277,
+      "ci95": [
+        -0.25622038227003907,
+        -0.2307771687696065
+      ],
+      "dz": -4.373807087443824,
+      "t": -38.129966185419185,
+      "p_t": 7.485761729724497e-51,
+      "p_wilcoxon": 3.6060528034893936e-14,
+      "prop_positive": 0.0
+    },
+    "rank1_accuracy": 1.0,
+    "mean_rank": 1.0,
+    "candidates_per_probe_range": [
+      38,
+      38
+    ],
+    "chance_rank1_mean": 0.02631578947368421,
+    "pair_min": 0.4523566663265228,
+    "pair_max": 0.7152793407440186,
+    "unrel_same_max_identity_mean": 0.16375559805011428,
+    "odd_one_out_correct": 1.0,
+    "n_triads": 5624,
+    "auc_pair_vs_unrel_same": 1.0
+  }
+}

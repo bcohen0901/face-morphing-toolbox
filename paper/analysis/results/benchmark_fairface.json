@@ -1,0 +1,8 @@
+{
+  "n_identities": 153,
+  "same_person_mean": 0.9664137441348406,
+  "same_person_sd": 0.02571975835846256,
+  "different_person_mean": 0.8679912932727435,
+  "different_person_sd": 0.07475819267464533,
+  "different_person_p99": 0.9734033113718032
+}

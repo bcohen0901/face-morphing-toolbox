@@ -1,0 +1,19 @@
+{
+  "n_identities": 153,
+  "groups": {
+    "BF": 48,
+    "BM": 32,
+    "WF": 37,
+    "WM": 36
+  },
+  "same_person_mean": 0.8477767476069382,
+  "same_person_sd": 0.040252622008426595,
+  "same_person_range": [
+    0.7291911244392395,
+    0.9375307559967041
+  ],
+  "different_person_mean": 0.053540659015153036,
+  "different_person_sd": 0.07929146622360093,
+  "different_person_p99": 0.25184258341789245,
+  "n_different_pairs": 2920
+}

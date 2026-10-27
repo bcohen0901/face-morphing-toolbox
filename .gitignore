@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+paper/analysis/*.npz
+paper/analysis/regenerated/
+paper/analysis/*.png
+paper/figures/*.png
