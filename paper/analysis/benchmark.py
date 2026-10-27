@@ -39,6 +39,7 @@ app.prepare(ctx_id=-1, det_size=(640, 640))
 
 
 def embed(path):
+    """Unit-length ArcFace embedding of the largest face in the image at `path`."""
     faces = app.get(cv2.imread(path))
     face = max(faces, key=lambda f: (f.bbox[2] - f.bbox[0]) * (f.bbox[3] - f.bbox[1]))
     return face.normed_embedding

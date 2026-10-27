@@ -25,7 +25,9 @@ def levels_manifest():
     """Toolbox regenerations at each strength level, with the same originals."""
     rows = []
     root = os.path.join(HERE, "regenerated")
-    for level in sorted(d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))):
+    for level in sorted(
+        d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))
+    ):
         for group, num in cohort.identities():
             ident = f"{group}-{num}"
             rows.append((level, group, ident, "original", cohort.original(group, num)))
@@ -36,6 +38,7 @@ def levels_manifest():
 
 
 def main():
+    """Embed every image in the manifest and write embeddings_levels.npz."""
     app = FaceAnalysis(
         name="buffalo_l",
         allowed_modules=["detection", "recognition"],
@@ -51,7 +54,9 @@ def main():
             missed.append(row[4])
             continue
         # Largest detected face
-        face = max(faces, key=lambda f: (f.bbox[2] - f.bbox[0]) * (f.bbox[3] - f.bbox[1]))
+        face = max(
+            faces, key=lambda f: (f.bbox[2] - f.bbox[0]) * (f.bbox[3] - f.bbox[1])
+        )
         keep.append(row)
         embs.append(face.normed_embedding)
         if i % 100 == 0:

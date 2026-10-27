@@ -55,16 +55,19 @@ POLY = lib.BUILTIN_FACE_POLY
 
 
 def read(path):
+    """Image (RGB, float32), landmarks, and template curves for the photo at `path` and its .tem file."""
     img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB).astype(np.float32)
     pts, curves = lib.load_tem(path[:-4] + ".tem")
     return img, pts, curves
 
 
 def average(group):
+    """The CFD category average for `group` (e.g. "AM")."""
     return read(f"{AVG}/CFD-{group}-AVG.jpg")
 
 
 def original(ident):
+    """The neutral CFD photograph for identity `ident` (e.g. "AM-204")."""
     group, num = ident.split("-")
     return read(glob.glob(f"{STIM}/{group}/CFD-{group}-{num}-*-N.jpg")[0])
 
@@ -90,7 +93,9 @@ def transform(A, B, C, shape=1.0, color=STRENGTH, texture=STRENGTH):
         color_space="rgb",
         edge_fill=lib.EDGE_FILL,
     )
-    img, pts = lib.run_transform_single(A[0], A[1], B[0], B[1], C[0], C[1], C[2], TRIS, params)
+    img, pts = lib.run_transform_single(
+        A[0], A[1], B[0], B[1], C[0], C[1], C[2], TRIS, params
+    )
     return img, pts
 
 
@@ -102,7 +107,9 @@ def masked(face, ref=None):
     """
     img, pts, _ = face
     if ref is not None:
-        img, pts = lib.normalize_to_reference(img, pts, ref[1], (0, 1, 96), align="umeyama")
+        img, pts = lib.normalize_to_reference(
+            img, pts, ref[1], (0, 1, 96), align="umeyama"
+        )
     h, w = img.shape[:2]
     m = lib.make_face_mask(h, w, pts, POLY, feather=5)[..., None]
     return (img * m + np.array(GRAY, np.float32) * (1 - m)).astype(np.uint8), pts
@@ -110,13 +117,16 @@ def masked(face, ref=None):
 
 def blend_averages(A, C, lam):
     """Average lying a proportion lam of the way from A to C (Equation 4)."""
-    imgC, ptsC = lib.normalize_to_reference(C[0], C[1], A[1], (0, 1, 96), align="umeyama")
+    imgC, ptsC = lib.normalize_to_reference(
+        C[0], C[1], A[1], (0, 1, 96), align="umeyama"
+    )
     h, w = A[0].shape[:2]
     img, pts = lib.morph_frame(A[0], A[1], imgC, ptsC, TRIS, lam, h, w)
     return img.astype(np.float32), pts.astype(np.float32), A[2]
 
 
 def crop_box(pts_list, pad=0.12, all_points=False):
+    """Square crop (x, y, side) around the face outline, or all landmarks, of every shape in `pts_list`."""
     allp = np.vstack([p if all_points else p[POLY] for p in pts_list])
     x0, y0 = allp.min(0)
     x1, y1 = allp.max(0)
@@ -126,6 +136,7 @@ def crop_box(pts_list, pad=0.12, all_points=False):
 
 
 def crop(img, box):
+    """Cut the square `box` from `img`, padding with gray where it extends past the image."""
     x, y, s = box
     h, w = img.shape[:2]
     canvas = np.full((s, s, 3), GRAY, np.uint8)
@@ -136,6 +147,7 @@ def crop(img, box):
 
 
 def show(ax, img, title=None, sub=None):
+    """Draw `img` on `ax` without axes, with an optional title above and caption below."""
     ax.imshow(img)
     ax.set_xticks([])
     ax.set_yticks([])
@@ -145,7 +157,14 @@ def show(ax, img, title=None, sub=None):
         ax.set_title(title, color=INK, fontsize=8, pad=3)
     if sub:
         ax.text(
-            0.5, -0.04, sub, transform=ax.transAxes, ha="center", va="top", fontsize=7, color=MUTED
+            0.5,
+            -0.04,
+            sub,
+            transform=ax.transAxes,
+            ha="center",
+            va="top",
+            fontsize=7,
+            color=MUTED,
         )
 
 
@@ -161,6 +180,7 @@ def doppelgangers(ident):
 
 # ── Figure 1: example doppelganger pairs ──────────────────────────────────
 def figure_examples(idents=("AM-204", "WF-020")):
+    """Figure 1: original, same-category, and cross-category doppelganger for each identity."""
     label = {"A": "East Asian", "W": "White"}
     fig, axes = plt.subplots(len(idents), 3, figsize=(5.0, 1.85 * len(idents) + 0.3))
     for r, (row, ident) in enumerate(zip(axes, idents)):
@@ -183,18 +203,27 @@ def figure_examples(idents=("AM-204", "WF-020")):
 
 # ── Equation figure: D = C + (B − A) ──────────────────────────────────────
 def figure_equation(ident="AM-204"):
+    """Figure 2: the doppelganger equation illustrated with the averages and the source face."""
     group = ident.split("-")[0]
     other = ("W" if group[0] == "A" else "A") + group[1]
     A, B, Cw = average(group), original(ident), average(other)
     same, cross = transform(A, B, A), transform(A, B, Cw)
     mB, mA, mCw = masked(B, A), masked(A), masked(Cw, A)
     box = crop_box([mB[1], mA[1], mCw[1], same[1], cross[1]])
-    rows = [("Same-category doppelganger", mA, same), ("Cross-category doppelganger", mCw, cross)]
+    rows = [
+        ("Same-category doppelganger", mA, same),
+        ("Cross-category doppelganger", mCw, cross),
+    ]
     fig = plt.figure(figsize=(6.8, 3.4))
     gs = fig.add_gridspec(
         2, 7, width_ratios=[1, 0.18, 1, 0.18, 1, 0.18, 1], wspace=0.05, hspace=0.35
     )
-    heads = ["Source face (B)", "Source average (A)", "Target average (C)", "Doppelganger (D)"]
+    heads = [
+        "Source face (B)",
+        "Source average (A)",
+        "Target average (C)",
+        "Doppelganger (D)",
+    ]
     subs = [
         [f"CFD-{ident}", "East Asian male", "East Asian male", "East Asian"],
         [f"CFD-{ident}", "East Asian male", "White male", "White"],
@@ -239,6 +268,7 @@ def figure_equation(ident="AM-204"):
 
 # ── Figure X: step-by-step decomposition ──────────────────────────────────
 def figure_steps(ident="AM-204"):
+    """Figure 3: the target average, then shape, color, and texture added in turn."""
     group = ident.split("-")[0]
     other = ("W" if group[0] == "A" else "A") + group[1]
     A, B, C = average(group), original(ident), average(other)
@@ -255,10 +285,16 @@ def figure_steps(ident="AM-204"):
             r"$x_D = x_C + \sigma(x_B - x_A)$",
             base,
         ),
-        ("3. Warp", "Target average warped\nto the doppelganger\nshape (σ = 1)", shape_only),
+        (
+            "3. Warp",
+            "Target average warped\nto the doppelganger\nshape (σ = 1)",
+            shape_only,
+        ),
         (
             "4. Color",
-            f"Source face’s color\ndeviation added\n(κ = {STRENGTH:.2f})".replace("0.", "."),
+            f"Source face’s color\ndeviation added\n(κ = {STRENGTH:.2f})".replace(
+                "0.", "."
+            ),
             with_color,
         ),
         (
@@ -276,7 +312,9 @@ def figure_steps(ident="AM-204"):
     axes[0].scatter(
         pts_c[:, 0] - x, pts_c[:, 1] - y, s=1.2, color="#d6d5d0", linewidths=0, zorder=3
     )
-    axes[0].scatter(pts_d[:, 0] - x, pts_d[:, 1] - y, s=1.2, color=BLUE, linewidths=0, zorder=4)
+    axes[0].scatter(
+        pts_d[:, 0] - x, pts_d[:, 1] - y, s=1.2, color=BLUE, linewidths=0, zorder=4
+    )
     fig.subplots_adjust(wspace=0.06, left=0.01, right=0.99, top=0.88, bottom=0.25)
     fig.savefig(os.path.join(HERE, "fig_steps.png"), bbox_inches="tight")
     plt.close(fig)
@@ -284,6 +322,7 @@ def figure_steps(ident="AM-204"):
 
 # ── Continuum figure ──────────────────────────────────────────────────────
 def figure_continuum(ident="AM-204", steps=11):
+    """Figure 4: the continuum from the same-category to the cross-category doppelganger (Equation 4)."""
     group = ident.split("-")[0]
     other = ("W" if group[0] == "A" else "A") + group[1]
     A, B, C = average(group), original(ident), average(other)

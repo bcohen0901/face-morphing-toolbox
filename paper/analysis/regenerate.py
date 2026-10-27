@@ -44,6 +44,7 @@ OTHER = {"A": "W", "W": "A"}
 
 
 def load_lib():
+    """Load the Toolbox's transformation code from app/app.py without starting the Streamlit UI."""
     src = open(APP).read()
     lib = types.ModuleType("toolbox")
     lib.__file__ = APP
@@ -56,6 +57,7 @@ TRIS = lib._load_builtin_tris()
 
 
 def read(path):
+    """Image (RGB, float32), landmarks, and template curves for the photo at `path` and its .tem file."""
     img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB).astype(np.float32)
     pts, curves = lib.load_tem(path[:-4] + ".tem")
     return img, pts, curves
@@ -65,6 +67,7 @@ AVERAGES = {g: read(f"{AVG}/CFD-{g}-AVG.jpg") for g in ("AF", "AM", "WF", "WM")}
 
 
 def jobs():
+    """One (group, number, original path, level, target category) job per output image."""
     for group, num in cohort.identities():
         orig = cohort.original(group, num)
         for level in LEVELS:
@@ -73,6 +76,7 @@ def jobs():
 
 
 def run(job):
+    """Make one doppelganger with the Toolbox settings for its level and save it as a JPEG."""
     group, num, orig, level, target = job
     out = os.path.join(OUT, level, f"{group}_{num}_as{target}.jpg")
     if os.path.exists(out):
@@ -100,9 +104,13 @@ def run(job):
         color_space="rgb",
         edge_fill=lib.EDGE_FILL,
     )
-    img, _ = lib.run_transform_single(imgA, ptsA, imgB, ptsB, imgC, ptsC, curves, TRIS, params)
+    img, _ = lib.run_transform_single(
+        imgA, ptsA, imgB, ptsB, imgC, ptsC, curves, TRIS, params
+    )
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    cv2.imwrite(out, cv2.cvtColor(img, cv2.COLOR_RGB2BGR), [cv2.IMWRITE_JPEG_QUALITY, 95])
+    cv2.imwrite(
+        out, cv2.cvtColor(img, cv2.COLOR_RGB2BGR), [cv2.IMWRITE_JPEG_QUALITY, 95]
+    )
     return out
 
 

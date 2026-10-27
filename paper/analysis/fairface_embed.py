@@ -81,6 +81,7 @@ detector.prepare(ctx_id=-1, det_size=(640, 640))
 
 
 def features(path):
+    """FairFace penultimate-layer features (unit length) and the 7-race probabilities for one image."""
     img = cv2.imread(path)
     faces = detector.get(img)
     face = max(faces, key=lambda f: (f.bbox[2] - f.bbox[0]) * (f.bbox[3] - f.bbox[1]))
@@ -96,6 +97,7 @@ def features(path):
 
 
 def save(rows, name):
+    """Compute FairFace features for the manifest `rows` and write them to the .npz file `name`."""
     out = [features(r[4]) for r in rows]
     cols = list(zip(*rows))
     np.savez(
@@ -112,6 +114,7 @@ def save(rows, name):
 
 
 def benchmark():
+    """Same-person and different-person FairFace similarities for CFD neutral and happy photos."""
     emb = {}
     for hc in sorted(glob.glob(f"{CFD}/Images/CFD/*/CFD-*-HC.jpg")):
         group, num = re.search(r"CFD-([A-Z]{2})-(\d+)-", os.path.basename(hc)).groups()

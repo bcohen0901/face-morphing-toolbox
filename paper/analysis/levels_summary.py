@@ -24,15 +24,33 @@ ORDER = ["c30_t20", "c50_t50", "c75_t75", "c100_t100"]
 XLAB = ["0.30 / 0.20", "0.50 / 0.50", "0.75 / 0.75", "1.00 / 1.00"]
 SERIES = [  # (label, results key, field, color)
     ("Doppelganger pair", "pair_vs_unrelated_same_category", "mean_x", "#2a78d6"),
-    ("Original vs own same-category dopp.", "original_vs_own_vs_other", "mean_x", "#eb6834"),
-    ("Unrelated, same category", "pair_vs_unrelated_same_category", "mean_y", "#1baf7a"),
-    ("Unrelated, other category", "pair_vs_unrelated_cross_category", "mean_y", "#eda100"),
+    (
+        "Original vs own same-category dopp.",
+        "original_vs_own_vs_other",
+        "mean_x",
+        "#eb6834",
+    ),
+    (
+        "Unrelated, same category",
+        "pair_vs_unrelated_same_category",
+        "mean_y",
+        "#1baf7a",
+    ),
+    (
+        "Unrelated, other category",
+        "pair_vs_unrelated_cross_category",
+        "mean_y",
+        "#eda100",
+    ),
 ]
 
 
 def row(r):
+    """Summary values for one strength level, keyed by their table column names."""
     out = {lbl: r[key][field] for lbl, key, field, _ in SERIES}
-    out["Pair minus unrelated same category"] = r["pair_vs_unrelated_same_category"]["mean_diff"]
+    out["Pair minus unrelated same category"] = r["pair_vs_unrelated_same_category"][
+        "mean_diff"
+    ]
     out["Pair minus original-own"] = r["pair_vs_original_own"]["mean_diff"]
     out["Rank-1 identification"] = r["rank1_accuracy"]
     out["Odd-one-out correct"] = r["odd_one_out_correct"]

@@ -18,7 +18,9 @@ def stim_dir():
 def identities():
     """The 76 identities in identities.txt, as (group, number) pairs."""
     with open(os.path.join(HERE, "identities.txt")) as f:
-        lines = [line.strip() for line in f if line.strip() and not line.startswith("#")]
+        lines = [
+            line.strip() for line in f if line.strip() and not line.startswith("#")
+        ]
     return [tuple(line.split("-")) for line in lines]
 
 

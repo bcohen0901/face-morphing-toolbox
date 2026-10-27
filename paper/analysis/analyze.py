@@ -43,22 +43,27 @@ z = np.load(os.path.join(HERE, NPZ))
 E = z["embedding"]
 recs = [
     dict(set=s, group=g, id=i, version=v, k=k)
-    for k, (s, g, i, v) in enumerate(zip(z["set"], z["group"], z["identity"], z["version"]))
+    for k, (s, g, i, v) in enumerate(
+        zip(z["set"], z["group"], z["identity"], z["version"])
+    )
 ]
 
 ONLY = sys.argv[3] if len(sys.argv) > 3 else None
 SETS = {s: ("asA", "asW") for s in dict.fromkeys(z["set"]) if ONLY in (None, s)}
 LABEL = {
-    s: "Color/texture " + "{:.2f} / {:.2f}".format(*[int(x) / 100 for x in s[1:].split("_t")])
+    s: "Color/texture "
+    + "{:.2f} / {:.2f}".format(*[int(x) / 100 for x in s[1:].split("_t")])
     for s in SETS
 }
 
 
 def cos(a, b):
+    """Cosine similarity between embedding rows `a` and `b` (embeddings are unit length)."""
     return float(E[a] @ E[b])
 
 
 def analyze(set_name):
+    """Similarity comparisons, identification, and odd-one-out results for one strength level."""
     cat_versions = SETS[set_name]
     ids = defaultdict(dict)  # identity -> version -> row index
     meta = {}
@@ -66,7 +71,11 @@ def analyze(set_name):
         if r["set"] == set_name:
             ids[r["id"]][r["version"]] = r["k"]
             meta[r["id"]] = r["group"]
-    ids = {i: v for i, v in ids.items() if all(x in v for x in ("original",) + cat_versions)}
+    ids = {
+        i: v
+        for i, v in ids.items()
+        if all(x in v for x in ("original",) + cat_versions)
+    }
     # Same-category version is "as" + the group's first letter (asA, asW)
     src_cat = {i: f"as{meta[i][0]}" for i in ids}
     gender = {i: meta[i][1] for i in ids}
@@ -80,6 +89,7 @@ def analyze(set_name):
         same_g = [j for j in ids if j != i and gender[j] == gender[i]]
 
         def unrel(k, cat):
+            """Similarities of image `k` to the `cat` doppelgangers of the other identities in its group."""
             return [cos(k, ids[j][cat]) for j in same_g]
 
         pair = cos(S, X)
@@ -118,6 +128,7 @@ def analyze(set_name):
 
 
 def describe(x, y, label):
+    """Paired comparison of `x` and `y`: means, difference with 95% CI, t test, Wilcoxon test, and d_z."""
     d = np.asarray(x) - np.asarray(y)
     t = stats.ttest_rel(x, y)
     w = stats.wilcoxon(x, y)
@@ -138,19 +149,28 @@ def describe(x, y, label):
 
 
 with open(
-    os.path.join(HERE, "benchmark.json" if MODEL == "arcface" else f"benchmark_{MODEL}.json")
+    os.path.join(
+        HERE, "benchmark.json" if MODEL == "arcface" else f"benchmark_{MODEL}.json"
+    )
 ) as f:
     bench = json.load(f)
 results = {}
-fig, axes = plt.subplots(1, len(SETS), figsize=(5.6 * len(SETS), 4.6), sharey=True, squeeze=False)
+fig, axes = plt.subplots(
+    1, len(SETS), figsize=(5.6 * len(SETS), 4.6), sharey=True, squeeze=False
+)
 axes = axes[0]
 for ax, set_name in zip(axes, SETS):
     per_id, ranks, n_cands, triads = analyze(set_name)
-    col = {k: np.array([r[k] for r in per_id]) for k in per_id[0] if k not in ("id", "group")}
+    col = {
+        k: np.array([r[k] for r in per_id])
+        for k in per_id[0]
+        if k not in ("id", "group")
+    }
     res = {
         "n_identities": len(per_id),
         "groups": {
-            g: sum(r["group"] == g for r in per_id) for g in sorted({r["group"] for r in per_id})
+            g: sum(r["group"] == g for r in per_id)
+            for g in sorted({r["group"] for r in per_id})
         },
         "pair_vs_unrelated_same_category": describe(
             col["pair"], col["unrel_same"], "pair vs unrelated same-category"
@@ -161,7 +181,9 @@ for ax, set_name in zip(axes, SETS):
         "original_vs_own_vs_other": describe(
             col["orig_own"], col["orig_other"], "original-own vs original-other"
         ),
-        "pair_vs_original_own": describe(col["pair"], col["orig_own"], "pair vs original-own"),
+        "pair_vs_original_own": describe(
+            col["pair"], col["orig_own"], "pair vs original-own"
+        ),
         "rank1_accuracy": float((ranks == 1).mean()),
         "mean_rank": float(ranks.mean()),
         "candidates_per_probe_range": [int(min(n_cands)), int(max(n_cands))],
@@ -172,7 +194,8 @@ for ax, set_name in zip(axes, SETS):
         "odd_one_out_correct": float(triads.mean()),
         "n_triads": int(triads.size),
         "auc_pair_vs_unrel_same": float(
-            stats.mannwhitneyu(col["pair"], col["unrel_same"]).statistic / (len(col["pair"]) ** 2)
+            stats.mannwhitneyu(col["pair"], col["unrel_same"]).statistic
+            / (len(col["pair"]) ** 2)
         ),
     }
     results[set_name] = res
