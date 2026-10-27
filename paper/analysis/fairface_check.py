@@ -27,7 +27,7 @@ ASIAN = [RACES.index("East Asian"), RACES.index("Southeast Asian")]
 WHITE = [RACES.index("White")]
 
 rows = []
-for npz in ("embeddings_fairface.npz", "embeddings_fairface_levels.npz"):
+for npz in ("embeddings_fairface_levels.npz",):
     z = np.load(os.path.join(HERE, npz))
     for s in dict.fromkeys(z["set"]):
         for version in ("original", "asA", "asW"):

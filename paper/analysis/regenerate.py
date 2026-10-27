@@ -7,9 +7,7 @@ texture strengths vary. Output: regenerated/<level>/<GROUP>_<NUM>_as{A,W}.jpg
     python regenerate.py
 """
 
-import glob
 import os
-import re
 import sys
 import types
 from multiprocessing import Pool
@@ -17,6 +15,8 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+
+import cohort
 
 
 def _env(name):
@@ -65,12 +65,11 @@ AVERAGES = {g: read(f"{AVG}/CFD-{g}-AVG.jpg") for g in ("AF", "AM", "WF", "WM")}
 
 
 def jobs():
-    for group in ("AF", "AM", "WF", "WM"):
-        for orig in sorted(glob.glob(f"{STIM}/{group}/CFD-{group}-*-N.jpg")):
-            num = re.search(rf"CFD-{group}-(\d+)-", orig).group(1)
-            for level in LEVELS:
-                for target in (group[0], OTHER[group[0]]):
-                    yield group, num, orig, level, target
+    for group, num in cohort.identities():
+        orig = cohort.original(group, num)
+        for level in LEVELS:
+            for target in (group[0], OTHER[group[0]]):
+                yield group, num, orig, level, target
 
 
 def run(job):

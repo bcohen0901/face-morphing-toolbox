@@ -7,7 +7,6 @@ Faces are aligned from the insightface 5-point landmarks to a 224 px crop
 with margin around the face (approximating FairFace's dlib alignment).
 
 Writes, in the same format as embed.py (plus race_prob):
-    embeddings_fairface.npz          Psychomorph stimuli + originals
     embeddings_fairface_levels.npz   Toolbox regenerations + originals
     benchmark_fairface.json          same-person / different-person reference
 
@@ -22,11 +21,12 @@ import sys
 from collections import defaultdict
 
 import cv2
-import embed  # manifests
 import numpy as np
 import torch
 import torchvision
 from insightface.app import FaceAnalysis
+
+import embed  # manifests
 
 
 def _env(name):
@@ -142,6 +142,5 @@ def benchmark():
 
 
 if __name__ == "__main__":
-    save(embed.asian_white_manifest(), "embeddings_fairface.npz")
     save(embed.levels_manifest(), "embeddings_fairface_levels.npz")
     benchmark()

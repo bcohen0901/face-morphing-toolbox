@@ -1,7 +1,7 @@
 """Summarize how embedding similarity changes with transform strength.
 
-Reads results.json (Psychomorph stimuli) and results_levels.json (Toolbox
-regenerations); writes levels_summary.png and levels_summary.csv.
+Reads results_levels.json (Toolbox regenerations at each strength) and
+benchmark.json, and writes levels_summary.png and levels_summary.csv.
 
     python levels_summary.py
 """
@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt  # noqa: E402
 plt.rcParams.update({"font.family": "Times New Roman", "mathtext.fontset": "stix"})
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-psy = json.load(open(os.path.join(HERE, "results.json")))["AW"]
 lev = json.load(open(os.path.join(HERE, "results_levels.json")))
 
 ORDER = ["c30_t20", "c50_t50", "c75_t75", "c100_t100"]
@@ -41,9 +40,7 @@ def row(r):
     return out
 
 
-rows = [("Psychomorph (original stimuli)", row(psy))] + [
-    (f"Toolbox, color/texture {x}", row(lev[k])) for k, x in zip(ORDER, XLAB)
-]
+rows = [(f"Toolbox, color/texture {x}", row(lev[k])) for k, x in zip(ORDER, XLAB)]
 with open(os.path.join(HERE, "levels_summary.csv"), "w", newline="") as f:
     w = csv.writer(f)
     w.writerow(["Stimuli"] + list(rows[0][1]))
@@ -55,10 +52,8 @@ xs = range(len(ORDER))
 for lbl, key, field, color in SERIES:
     ys = [lev[k][key][field] for k in ORDER]
     ax.plot(xs, ys, color=color, lw=2, marker="o", ms=6, label=lbl)
-    ax.scatter([-1.1], [psy[key][field]], color=color, marker="D", s=36, zorder=3)
-ax.axvline(-0.55, color="#d6d5d0", lw=0.8)
-ax.set_xticks([-1.1, *xs], ["Psychomorph\n(original\nstimuli)", *XLAB], fontsize=8)
-ax.set_xlabel("Toolbox color / texture strength (shape = 1)", fontsize=9)
+ax.set_xticks(list(xs), XLAB, fontsize=8)
+ax.set_xlabel("Color / texture strength (shape = 1)", fontsize=9)
 ax.set_ylabel("Mean cosine similarity (ArcFace)", fontsize=9)
 ax.set_ylim(0, 0.9)
 for side in ("top", "right"):

@@ -19,7 +19,7 @@ The scripts read their input locations from environment variables.
 
 | Variable | Contents |
 |----------|----------|
-| `DOPP_STIM` | Folder with one subfolder per CFD group (`AF`, `AM`, `WF`, `WM`) holding the neutral CFD photographs and their `.tem` templates, an `Avg faces` subfolder holding `CFD-AF-AVG.jpg`, `CFD-AM-AVG.jpg`, `CFD-WF-AVG.jpg`, and `CFD-WM-AVG.jpg` with their `.tem` files, and (for `embed.py` only) `AF_asA`, `AF_asW`, and so on with the Psychomorph doppelgangers |
+| `DOPP_STIM` | Folder with one subfolder per CFD group (`AF`, `AM`, `WF`, `WM`) holding the neutral CFD photographs and their `.tem` templates, an `Avg faces` subfolder holding `CFD-AF-AVG.jpg`, `CFD-AM-AVG.jpg`, `CFD-WF-AVG.jpg`, and `CFD-WM-AVG.jpg` with their `.tem` files |
 | `CFD_DIR` | The CFD 3.0 folder, with `CFD neutral (ALL)` and `Images/CFD` (used for the same-person benchmark) |
 | `FAIRFACE_WEIGHTS` | Path to `res34_fair_align_multi_7_20190809.pt` from the FairFace repository (Kärkkäinen & Joo, 2021) |
 
@@ -42,10 +42,8 @@ Run from `paper/analysis`:
 
 ```bash
 python regenerate.py                 # Toolbox doppelgangers at four strengths
-python embed.py --levels             # ArcFace embeddings of those images
-python embed.py                      # ArcFace embeddings of the Psychomorph stimuli
+python embed.py                      # ArcFace embeddings of those images and the originals
 python benchmark.py                  # same-person and different-person reference
-python analyze.py                                        # Psychomorph stimuli
 python analyze.py embeddings_levels.npz levels           # all strengths (Table 4)
 python analyze.py embeddings_levels.npz primary c75_t75  # Figure 5
 python levels_summary.py             # strength summary table and chart
@@ -54,4 +52,5 @@ python fairface_check.py             # FairFace race-classification check
 MODEL=fairface python analyze.py embeddings_fairface_levels.npz fairface_primary c75_t75
 ```
 
-The `results` folder holds the outputs used in the manuscript.
+The 76 identities analyzed are listed in `analysis/identities.txt`. The `results`
+folder holds the outputs used in the manuscript.

@@ -15,10 +15,9 @@ same-gender doppelgangers of the partner's apparent category, and an
 odd-one-out triad test (doppelganger_i, partner_i, unrelated same-category
 face); the model's odd one out is the item least similar to the other two.
 
-    python analyze.py                                  # Psychomorph set
-    python analyze.py embeddings_levels.npz levels     # Toolbox strength levels
+    python analyze.py embeddings_levels.npz levels            # all strength levels
     python analyze.py embeddings_levels.npz primary c75_t75   # one level only
-    MODEL=fairface python analyze.py embeddings_fairface.npz fairface
+    MODEL=fairface python analyze.py embeddings_fairface_levels.npz fairface_primary c75_t75
 """
 
 import json
@@ -38,7 +37,7 @@ plt.rcParams.update({"font.family": "Times New Roman", "mathtext.fontset": "stix
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL = os.environ.get("MODEL", "arcface")
 MODEL_NAME = {"arcface": "ArcFace", "fairface": "FairFace"}[MODEL]
-NPZ = sys.argv[1] if len(sys.argv) > 1 else "embeddings.npz"
+NPZ = sys.argv[1] if len(sys.argv) > 1 else "embeddings_levels.npz"
 SUFFIX = f"_{sys.argv[2]}" if len(sys.argv) > 2 else ""
 z = np.load(os.path.join(HERE, NPZ))
 E = z["embedding"]
@@ -50,10 +49,7 @@ recs = [
 ONLY = sys.argv[3] if len(sys.argv) > 3 else None
 SETS = {s: ("asA", "asW") for s in dict.fromkeys(z["set"]) if ONLY in (None, s)}
 LABEL = {
-    s: "Psychomorph stimuli"
-    if s == "AW"
-    else "Toolbox, color/texture "
-    + "{:.2f} / {:.2f}".format(*[int(x) / 100 for x in s[1:].split("_t")])
+    s: "Color/texture " + "{:.2f} / {:.2f}".format(*[int(x) / 100 for x in s[1:].split("_t")])
     for s in SETS
 }
 
