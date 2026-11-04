@@ -7,20 +7,6 @@ No local file paths needed — deployable on Streamlit Community Cloud.
 
 Run locally:  streamlit run face_morphing_app_n.py
 Requires:     pip install streamlit opencv-python-headless numpy
-
-Landmark-alignment cutover, 2026-10-04
---------------------------------------
-Anchor alignment (normalize_to_reference, used by morph_controlled and
-average_faces) now defaults to a closed-form least-squares Umeyama fit.
-It previously used cv2.estimateAffinePartial2D(..., LMEDS), which with only
-three anchors fits a two-point subset exactly, abandons the third, and is not
-translation-invariant.
-
-Stimuli generated BEFORE this date used LMEDS. Nothing already on disk has
-changed, but regenerating an older set now produces slightly different output
-(a few px of landmark shift after cropping; ~2.5% mean pixel difference at
-full strength). To rebuild a pre-cutover set byte-for-byte, pass
-align="lmeds" — or set "align": "lmeds" in a pipeline config recipe.
 """
 
 import base64
