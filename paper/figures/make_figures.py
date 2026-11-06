@@ -1,7 +1,8 @@
 """Build the manuscript figures from the Face Morphing Toolbox (v1.2.0).
 
 Every image is generated here from CFD photographs, CFD templates, and the
-CFD category averages, so the figures can be reproduced exactly.
+CFD category averages, so the figures can be reproduced exactly. Figure 6 builds
+its own averages from the photographs in `CFD_DIR`.
 
     python make_figures.py          # writes fig_*.png (300 dpi) next to this file
 """
@@ -350,9 +351,57 @@ def figure_continuum(ident="AM-204", steps=11):
     plt.close(fig)
 
 
+# ── Figure 6: trustworthiness doppelgangers ───────────────────────────────
+def built_average(idents):
+    """Average of the neutral CFD photographs of `idents`, built with the Toolbox."""
+    folder = f"{_env('CFD_DIR')}/CFD neutral (ALL)"
+    faces = [
+        read(sorted(glob.glob(f"{folder}/CFD-{i}-*-N.jpg"))[0]) for i in sorted(idents)
+    ]
+    img, pts = lib.average_faces(
+        [f[0] for f in faces],
+        [f[1] for f in faces],
+        TRIS,
+        face_poly=POLY,
+        mask_output=False,
+        align="umeyama",
+    )
+    return img.astype(np.float32), pts, faces[0][2]
+
+
+def figure_trust(ident="WM-004"):
+    """Figure 6: one face transformed toward low and high trustworthiness averages.
+
+    All three averages are built the same way from the same photographs, so the
+    panels differ only in the average the face's deviation is added to.
+    """
+    with open(os.path.join(HERE, "trust_faces.txt")) as f:
+        rows = [ln.split() for ln in f if ln.strip() and not ln.startswith("#")]
+    high = [i for k, i in rows if k == "high"]
+    low = [i for k, i in rows if k == "low"]
+    every = [i for _, i in rows]
+    folder = f"{_env('CFD_DIR')}/CFD neutral (ALL)"
+    A, lo, hi = built_average(every), built_average(low), built_average(high)
+    B = read(sorted(glob.glob(f"{folder}/CFD-{ident}-*-N.jpg"))[0])
+    panels = [
+        ("Low trustworthiness", None, transform(A, B, lo)),
+        ("Average trustworthiness", None, transform(A, B, A)),
+        ("High trustworthiness", None, transform(A, B, hi)),
+    ]
+    box = crop_box([p[2][1] for p in panels])
+    fig, axes = plt.subplots(1, 3, figsize=(5.0, 1.95))
+    for ax, (title, sub, (img, _)) in zip(axes, panels):
+        show(ax, crop(img, box), title, sub)
+    fig.subplots_adjust(wspace=0.06, left=0.01, right=0.99, top=0.9, bottom=0.1)
+    fig.savefig(os.path.join(HERE, "fig_trust.png"), bbox_inches="tight")
+    plt.close(fig)
+    return len(every)
+
+
 if __name__ == "__main__":
     figure_examples()
     figure_equation()
     figure_steps()
     figure_continuum()
+    figure_trust()
     print("wrote", sorted(f for f in os.listdir(HERE) if f.endswith(".png")))

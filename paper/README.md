@@ -20,21 +20,22 @@ The scripts read their input locations from environment variables.
 | Variable | Contents |
 |----------|----------|
 | `DOPP_STIM` | Folder with one subfolder per CFD group (`AF`, `AM`, `WF`, `WM`) holding the neutral CFD photographs and their `.tem` templates, an `Avg faces` subfolder holding `CFD-AF-AVG.jpg`, `CFD-AM-AVG.jpg`, `CFD-WF-AVG.jpg`, and `CFD-WM-AVG.jpg` with their `.tem` files |
-| `CFD_DIR` | The CFD 3.0 folder, with `CFD neutral (ALL)` and `Images/CFD` (used for the same-person benchmark) |
+| `CFD_DIR` | The CFD 3.0 folder, with `CFD neutral (ALL)` (Figure 6 and the same-person benchmark) and `Images/CFD` (same-person benchmark) |
 | `FAIRFACE_WEIGHTS` | Path to `res34_fair_align_multi_7_20190809.pt` from the FairFace repository (Kärkkäinen & Joo, 2021) |
 
 The ArcFace analyses use the insightface `buffalo_l` models, which insightface
 downloads to `~/.insightface` on first use.
 
-## Figures 1–4
+## Figures 1–4 and 6
 
 ```bash
-DOPP_STIM=/path/to/stimuli python paper/figures/make_figures.py
+DOPP_STIM=/path/to/stimuli CFD_DIR=/path/to/cfd python paper/figures/make_figures.py
 ```
 
 Writes `fig_examples.png`, `fig_equation.png`, `fig_steps.png`, and
-`fig_continuum.png` (Figures 1–4) with shape strength 1 and color and texture
-strengths of .75.
+`fig_continuum.png` (Figures 1–4), and `fig_trust.png` (Figure 6) with shape
+strength 1 and color and texture strengths of .75. Figure 6 builds its averages
+from the CFD photographs listed in `figures/trust_faces.txt`.
 
 ## Embedding analyses (Figure 5, Table 4)
 
