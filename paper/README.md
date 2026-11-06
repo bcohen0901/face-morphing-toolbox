@@ -59,12 +59,19 @@ folder holds the outputs used in the manuscript.
 ## Familiarity pilot
 
 `pilot/pilot_trials.csv` holds the de-identified test trials for the 50 participants
-who finished. It contains no platform IDs, demographics, or free-text answers. The
-columns are described at the top of `pilot/analyze.R`.
+who finished, one row per trial. It contains no platform IDs, demographics, or
+free-text answers. `pilot/results_summary.txt` lists the condition means and the
+mixed-model results reported in the manuscript.
 
-```bash
-Rscript paper/pilot/analyze.R        # R packages: dplyr, lmerTest, emmeans
-```
+| Column | Contents |
+|--------|----------|
+| `participant` | Random participant label |
+| `list` | Counterbalancing list (1–4) |
+| `identity` | CFD identity of the source face |
+| `source_cat`, `shown_cat` | Source and apparent category (A, B, L, W) |
+| `role` | `old` = studied face; `dopp` = cross-category doppelganger of a studied face; `new_sc`, `new_xc` = new face, same- or cross-category |
+| `rating` | Familiarity, from 1 (not at all familiar) to 7 (extremely familiar) |
+| `rt` | Response time in ms |
+| `flagged` | 1 = missed an attention check or performed poorly on the filler task |
 
-Writes `pilot/results_summary.txt`. The stimuli are not included, because they are
-derived from CFD photographs.
+The stimuli are not included, because they are derived from CFD photographs.
