@@ -225,8 +225,18 @@ def figure_equation(ident="AM-204"):
         "Doppelganger (D)",
     ]
     subs = [
-        [f"CFD-{ident}", "East Asian male", "East Asian male", "East Asian"],
-        [f"CFD-{ident}", "East Asian male", "White male", "White"],
+        [
+            f"CFD-{ident}",
+            "East Asian male average",
+            "East Asian male average",
+            f"East Asian doppelganger\nof CFD-{ident}",
+        ],
+        [
+            f"CFD-{ident}",
+            "East Asian male average",
+            "White male average",
+            f"White doppelganger\nof CFD-{ident}",
+        ],
     ]
     for r, (_, C, D) in enumerate(rows):
         imgs = [mB[0], mA[0], C[0], D[0]]
@@ -255,7 +265,7 @@ def figure_equation(ident="AM-204"):
         )
     fig.text(
         0.5,
-        0.005,
+        -0.03,
         "D = C + strength × (B − A). The source face’s deviation from its own "
         "category average is added to the target average.",
         ha="center",
@@ -280,7 +290,7 @@ def figure_steps(ident="AM-204"):
     x, y, _ = box
     panels = [
         (
-            "1–2. Shape",
+            "1–2. Compute landmarks",
             "Gray = target average\nBlue = doppelganger,\n"
             r"$x_D = x_C + \sigma(x_B - x_A)$",
             base,
@@ -291,14 +301,14 @@ def figure_steps(ident="AM-204"):
             shape_only,
         ),
         (
-            "4. Color",
+            "4. Warp + color",
             f"Source face’s color\ndeviation added\n(κ = {STRENGTH:.2f})".replace(
                 "0.", "."
             ),
             with_color,
         ),
         (
-            "5–6. Texture, finishing",
+            "5–6. Warp + color + texture",
             f"Fine texture added\n(τ = {STRENGTH:.2f})".replace("0.", ".")
             + " and face\nmasked onto background",
             final,

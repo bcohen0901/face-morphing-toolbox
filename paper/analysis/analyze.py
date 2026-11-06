@@ -8,6 +8,7 @@ For each source identity i (source category s, other category o, gender g):
   unrel_cross mean cos(doppelganger_i, doppelgangers of other same-gender
              identities in the other apparent category)
   orig_own   cos(original photo_i, same-category doppelganger_i)
+  orig_cross cos(original photo_i, cross-category doppelganger_i)
   orig_other mean cos(original photo_i, same-category doppelgangers of other
              same-gender identities from the same source category)
 Also: rank-1 identification of each doppelganger's partner among all
@@ -96,6 +97,7 @@ def analyze(set_name):
         unrel_same = np.mean(unrel(S, s) + unrel(X, o))
         unrel_cross = np.mean(unrel(S, o) + unrel(X, s))
         orig_own = cos(Orig, S)
+        orig_cross = cos(Orig, X)
         orig_other = np.mean([cos(Orig, ids[j][s]) for j in same_g if src_cat[j] == s])
         per_id.append(
             dict(
@@ -105,6 +107,7 @@ def analyze(set_name):
                 unrel_same=unrel_same,
                 unrel_cross=unrel_cross,
                 orig_own=orig_own,
+                orig_cross=orig_cross,
                 orig_other=orig_other,
             )
         )
@@ -156,7 +159,7 @@ with open(
     bench = json.load(f)
 results = {}
 fig, axes = plt.subplots(
-    1, len(SETS), figsize=(5.6 * len(SETS), 4.6), sharey=True, squeeze=False
+    1, len(SETS), figsize=(6.5 * len(SETS), 4.6), sharey=True, squeeze=False
 )
 axes = axes[0]
 for ax, set_name in zip(axes, SETS):
@@ -200,19 +203,20 @@ for ax, set_name in zip(axes, SETS):
     }
     results[set_name] = res
 
-    keys = ["pair", "unrel_same", "unrel_cross", "orig_own", "orig_other"]
+    keys = ["orig_own", "orig_cross", "pair", "unrel_same", "unrel_cross", "orig_other"]
     names = [
-        "Doppelganger\npair",
-        "Unrelated,\nsame\ncategory",
-        "Unrelated,\nother\ncategory",
-        "Original vs\nits own\nsame-cat.\ndopp.",
-        "Original vs\nunrelated\nsame-cat.\ndopps.",
+        "Original vs.\nsame-category\ndoppelganger",
+        "Original vs.\ncross-category\ndoppelganger",
+        "Same- vs.\ncross-category\ndoppelganger",
+        "Doppelganger vs.\nunrelated,\nsame category",
+        "Doppelganger vs.\nunrelated,\nother category",
+        "Original vs.\nunrelated same-\ncategory dopp.",
     ]
-    xs = [0, 1, 2, 3.5, 4.5]
+    xs = [0, 1, 2, 3.5, 4.5, 5.5]
     rng = np.random.default_rng(0)
     for x, k in zip(xs, keys):
         vals = col[k]
-        color = "#2a78d6" if k in ("pair", "orig_own") else "#8a8984"
+        color = "#2a78d6" if k in ("orig_own", "orig_cross", "pair") else "#8a8984"
         ax.scatter(
             x + rng.uniform(-0.18, 0.18, len(vals)),
             vals,
@@ -227,9 +231,15 @@ for ax, set_name in zip(axes, SETS):
         (bench["different_person_p99"], "Different people (99th pct.)"),
     ):
         ax.axhline(y, color="#52514e", lw=0.8, ls="--", zorder=0)
-        ax.text(-0.45, y + 0.012, txt, fontsize=6.5, color="#52514e", ha="left")
-    ax.set_xticks(xs, names, fontsize=7.5)
+        ax.text(5.95, y + 0.012, txt, fontsize=6.5, color="#52514e", ha="right")
+    ax.set_xticks(xs, names, fontsize=7)
+    ax.set_xlim(-0.55, 6.0)
     ax.axvline(2.75, color="#d6d5d0", lw=0.8, zorder=0)
+    ax.text(1, 0.985, "Same source face", fontsize=7.5, color="#0b0b0b", ha="center")
+    ax.text(
+        4.5, 0.985, "Different identities", fontsize=7.5, color="#0b0b0b", ha="center"
+    )
+    ax.set_ylim(top=1.02)
     if len(SETS) > 1:
         ax.set_title(f"{LABEL[set_name]} (n = {len(per_id)} identities)", fontsize=10)
     ax.axhline(0, color="#d6d5d0", lw=0.8, zorder=0)
