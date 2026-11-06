@@ -37,7 +37,7 @@ Writes `fig_examples.png`, `fig_equation.png`, `fig_steps.png`, and
 strength 1 and color and texture strengths of .75. Figure 6 builds its averages
 from the CFD photographs listed in `figures/trust_faces.txt`.
 
-## Embedding analyses (Figure 5, Table 4)
+## Embedding analyses (Figure 5, Table 3)
 
 Run from `paper/analysis`:
 
@@ -45,7 +45,7 @@ Run from `paper/analysis`:
 python regenerate.py                 # Toolbox doppelgangers at four strengths
 python embed.py                      # ArcFace embeddings of those images and the originals
 python benchmark.py                  # same-person and different-person reference
-python analyze.py embeddings_levels.npz levels           # all strengths (Table 4)
+python analyze.py embeddings_levels.npz levels           # all strengths (Table 3)
 python analyze.py embeddings_levels.npz primary c75_t75  # Figure 5
 python levels_summary.py             # strength summary table and chart
 python fairface_embed.py             # FairFace embeddings and race predictions
