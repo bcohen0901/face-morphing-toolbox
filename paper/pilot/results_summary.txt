@@ -1,0 +1,16 @@
+Participants: 50; trials: 3200
+
+   role    M   SD
+    old 4.56 0.85
+   dopp 3.12 1.00
+ new_sc 3.47 0.82
+ new_xc 2.88 0.87
+
+Mixed model: rating ~ condition + (1 | participant) + (1 | identity)
+  old - new_sc    b = 1.10, SE = 0.09, 95% CI [0.92, 1.28], t(3092) = 12.13, p = 0.0000
+  new_sc - new_xc b = 0.59, SE = 0.09, 95% CI [0.41, 0.77], t(3088) = 6.55, p = 0.0000
+  dopp - new_xc   b = 0.25, SE = 0.09, 95% CI [0.08, 0.43], t(3092) = 2.81, p = 0.0050
+  old - dopp      b = 1.44, SE = 0.09, 95% CI [1.26, 1.61], t(3088) = 15.88, p = 0.0000
+
+Sensitivity, unflagged participants (N = 46):
+  dopp - new_xc   b = 0.23, SE = 0.09, 95% CI [0.04, 0.41], t(2840) = 2.42, p = 0.0156

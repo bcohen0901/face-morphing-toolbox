@@ -55,3 +55,16 @@ MODEL=fairface python analyze.py embeddings_fairface_levels.npz fairface_primary
 
 The 76 identities analyzed are listed in `analysis/identities.txt`. The `results`
 folder holds the outputs used in the manuscript.
+
+## Familiarity pilot
+
+`pilot/pilot_trials.csv` holds the de-identified test trials for the 50 participants
+who finished. It contains no platform IDs, demographics, or free-text answers. The
+columns are described at the top of `pilot/analyze.R`.
+
+```bash
+Rscript paper/pilot/analyze.R        # R packages: dplyr, lmerTest, emmeans
+```
+
+Writes `pilot/results_summary.txt`. The stimuli are not included, because they are
+derived from CFD photographs.
